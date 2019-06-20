@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
+import 'package:mobile_framwork/components/Carousel/Carousel.dart';
+
+import 'package:mobile_framwork/routes.dart' as routes;
 
 void main() => runApp(AppStart());
 
@@ -11,55 +13,42 @@ class AppStart extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SafeArea(
-          minimum: EdgeInsets.only(top: 5.0),
-          child: MainApp(title: 'Flutter Demo Home Page')),
+      initialRoute: '/',
+      routes: routes.main,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
 class MainApp extends StatefulWidget {
-  MainApp({Key key, this.title}) : super(key: key);
-  final String title;
-
   @override
   _MainAppState createState() => _MainAppState();
 }
 
 class _MainAppState extends State<MainApp> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      body: Container(
+        height: double.infinity,
+        width: double.infinity,
+        child: Carousel(
+          landingItem: <Widget>[
+            Container(
+              color: Colors.red,
+              child: Center(child: Text('Letakan konten anda di sini'),),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+            Container(
+              color: Colors.blue,
+              child: Center(child: Text('Letakan konten anda di sini'),),
+            ),
+            Container(
+              color: Colors.green,
+              child: Center(child: RaisedButton(onPressed: () => Navigator.pushNamed(context, '/login'),child: Text('Login'),)),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
