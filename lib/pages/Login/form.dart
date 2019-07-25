@@ -1,5 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:imei_plugin/imei_plugin.dart';
+import 'package:mobile_framwork/static_data.dart';
+import 'dart:convert' as convert;
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class FormLogin extends StatefulWidget {
   @override
@@ -15,15 +21,10 @@ class _FormLoginState extends State<FormLogin> {
 
 //  LocalStorage localStorage = new LocalStorage();
 
+
   String validatePassword(String value) {
-    Pattern min6 = r'^(?=.{8,})';
-    Pattern hasNum = r'(?=.*[0-9])';
-    if (!new RegExp(min6).hasMatch(value))
+    if (value == '')
       return 'Minimal karakter adalah 6';
-    else if (!new RegExp(hasNum).hasMatch(value))
-      return 'Password harus terdiri dari huruf dan angka';
-    else
-      return null;
   }
 
   Widget emailForm() {
@@ -85,50 +86,53 @@ class _FormLoginState extends State<FormLogin> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
-        Text(
-          "Lupa Pasword ?",
-          textAlign: TextAlign.end,
-          style: TextStyle(color: Colors.black, fontSize: 15.0),
-        )
+//        Text(
+//          "Lupa Pasword ?",
+//          textAlign: TextAlign.end,
+//          style: TextStyle(color: Colors.black, fontSize: 15.0),
+//        )
       ],
     );
   }
 
   void submit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     if (formKey.currentState.validate()) {
       setState(() {
         isLoading = true;
       });
-//      final url = '${_staticData.MainLink}/mobile/auth/login';
-//      formKey.currentState.save(); // Save our form now.
-//      var body = json.encode({
-//        'password': data.password,
-//        'username': data.username
-//      });
-//      var res = await http.post(url, body: body, headers: {
-//        'Content-type': 'application/json',
-//        'Accept': 'application/json',
-//      });
+      String imei = await ImeiPlugin.getImei;
+      final url = '${apiUrl}api/mobile_login';
+      formKey.currentState.save(); // Save our form now.
+      var body = json.encode({
+        'password': data.password,
+        'id_number': data.username,
+        'imei': imei
+      });
+      var res = await http.post(url, body: body, headers: {
+        'Content-type': 'application/json',
+        'Accept': 'application/json',
+      });
       setState(() {
         isLoading = false;
       });
-//      var response = jsonDecode(res.body);
-//      if (response["error"] != null) {
-//        return showDialog(
-//            context: context,
-//            builder: (BuildContext context) => AlertDialog(
-//              title: Text("Terjadi Kesalahan"),
-//              content: Text(response["message"]),
-//              actions: <Widget>[
-//                new FlatButton(
-//                    onPressed: () => Navigator.of(context).pop(),
-//                    child: Text("Oke"))
-//              ],
-//            ));
-//      }
-//
-//      localStorage.setItem("apiKey", response["token"]);
-//      Navigator.pushNamed(context, '/dashboard');
+
+      var response = jsonDecode(res.body);
+      if (response["error"] != null) {
+        return showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: Text("Terjadi Kesalahan"),
+              content: Text(response["message"]),
+              actions: <Widget>[
+                new FlatButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text("Oke"))
+              ],
+            ));
+      }
+      prefs.setString("apiKey", response["token"]);
+      Navigator.pushReplacementNamed(context, '/dashboard');
     }
   }
 
@@ -198,56 +202,68 @@ class _FormLoginState extends State<FormLogin> {
 //      );
 //    }
     return Stack(children: <Widget>[
-      Positioned(
-        child: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
+//      Positioned(
+//        child: IconButton(
+//          icon: Icon(Icons.arrow_back),
+//          onPressed: () {
+//            Navigator.of(context).pop();
+//          },
+//        ),
+//      ),
       Container(
         margin: EdgeInsets.all(MediaQuery.of(context).size.width * 0.1),
-        child: Form(
-            key: formKey,
-            child: Column(
-              children: <Widget>[
+        child: Center(
+          child: ListView(
+            children : <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset('egp_logo.png', height: 150.0,),
+                  Form(
+                      key: formKey,
+                      child: Column(
+                        children: <Widget>[
 //               imageTop(),
-                Container(
-                  child: Text(
-                    'Login',
-                    style: TextStyle(
-                        fontSize: 25.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'montserrat'
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.03,
-                ),
-                emailForm(),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                passFrom(),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                descText(),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                submitButton(),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
+                          Container(
+                            child: Text(
+                              'Login',
+                              style: TextStyle(
+                                  fontSize: 25.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'montserrat'
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.03,
+                          ),
+                          emailForm(),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          passFrom(),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          descText(),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          submitButton(),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
 //                register(),
-              ],
-            )),
+                        ],
+                      )),
+                ],
+              ),
+            ]
+          ),
+        ),
       ),
     ]);
   }

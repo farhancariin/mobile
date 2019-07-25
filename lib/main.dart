@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_framwork/components/Carousel/Carousel.dart';
+import 'package:mobile_framwork/pages/Login/login.dart';
+import 'package:mobile_framwork/pages/dashboard/dashboard.dart';
 
 import 'package:mobile_framwork/routes.dart' as routes;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(AppStart());
 
@@ -26,29 +29,23 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  Widget pageRender() {
+    return new FutureBuilder<SharedPreferences>(
+      future: SharedPreferences.getInstance(),
+      builder:
+          (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
+        if ( snapshot.data.getString("apiKey") != null) {
+          return DashboardScreen();
+        } else {
+          return LoginScreen();
+        }
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        child: Carousel(
-          landingItem: <Widget>[
-            Container(
-              color: Colors.red,
-              child: Center(child: Text('Letakan konten anda di sini'),),
-            ),
-            Container(
-              color: Colors.blue,
-              child: Center(child: Text('Letakan konten anda di sini'),),
-            ),
-            Container(
-              color: Colors.green,
-              child: Center(child: RaisedButton(onPressed: () => Navigator.pushNamed(context, '/login'),child: Text('Login'),)),
-            ),
-          ],
-        ),
-      ),
+      body: pageRender()
     );
   }
 }
