@@ -30,8 +30,9 @@ class AuditScreenState extends State<AuditScreen> {
 
   Future<Map> employeeInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String imei = await ImeiPlugin.getImei;
-    String token = await prefs.getString('apiKey');
+    String imei = await ImeiPlugin
+        .getImei( shouldShowRequestPermissionRationale: false );
+    String token = await prefs.get('apiKey');
     final url = '${apiUrl}api/mobile_rtm_info';
     var body = json.encode({'imei': imei});
     var res = await http.post(url, body: body, headers: {

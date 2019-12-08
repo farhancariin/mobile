@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_framwork/components/Carousel/Carousel.dart';
 import 'package:mobile_framwork/pages/Login/login.dart';
 import 'package:mobile_framwork/pages/dashboard/dashboard.dart';
 
@@ -29,12 +28,19 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+
+  Future getApiKey() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    return prefs.get('apiKey');
+  }
+
   Widget pageRender() {
     return new FutureBuilder<SharedPreferences>(
-      future: SharedPreferences.getInstance(),
+      future: getApiKey(),
       builder:
           (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
-        if ( snapshot.data.getString("apiKey") != null) {
+        if ( snapshot.data != null) {
           return DashboardScreen();
         } else {
           return LoginScreen();

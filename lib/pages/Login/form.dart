@@ -25,6 +25,8 @@ class _FormLoginState extends State<FormLogin> {
   String validatePassword(String value) {
     if (value == '')
       return 'Minimal karakter adalah 6';
+    else
+      return null;
   }
 
   Widget emailForm() {
@@ -34,6 +36,8 @@ class _FormLoginState extends State<FormLogin> {
       validator: (value){
         if(value.isEmpty){
           return 'Username tidak boleh kosong';
+        }else{
+          return null;
         }
       },
       decoration: InputDecoration(
@@ -101,7 +105,8 @@ class _FormLoginState extends State<FormLogin> {
       setState(() {
         isLoading = true;
       });
-      String imei = await ImeiPlugin.getImei;
+      String imei = await ImeiPlugin
+          .getImei( shouldShowRequestPermissionRationale: false );
       final url = '${apiUrl}api/mobile_login';
       formKey.currentState.save(); // Save our form now.
       var body = json.encode({

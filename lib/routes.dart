@@ -1,6 +1,7 @@
 import 'package:mobile_framwork/main.dart';
 import 'package:mobile_framwork/pages/Login/login.dart';
 import 'package:mobile_framwork/pages/absence/absences.dart';
+import 'package:mobile_framwork/pages/absence/dinas.dart';
 import 'package:mobile_framwork/pages/audit/audit.dart';
 import 'package:mobile_framwork/pages/company_info/company_info.dart';
 import 'package:mobile_framwork/pages/dashboard/dashboard.dart';
@@ -29,6 +30,6 @@ final main = {
   '/monthly-report': (context) => MonthlyReportScreen(),
   '/slip': (context) => SlipScreen(),
   '/event': (context) => EventScreen(),
-  '/incident': (context) => IncidentScreen()
-
+  '/incident': (context) => IncidentScreen(),
+  '/dinas': (context) => DinasForm(),
 };
